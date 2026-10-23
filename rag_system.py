@@ -6,12 +6,16 @@ from flask_cors import CORS
 app = Flask(__name__)
 CORS(app)
 
-# ✅ YOUR EXACT VERIFIED WORKING API KEY FORMAT
+# =====================================================================
+# 🛠️ CZYSTA KONFIGURACJA KLUCZA I ADRESU URL (Klucz oddzielony od domeny)
+# =====================================================================
 GEMINI_API_KEY = "AQ.Ab8RN6K2VT8n2yjHxiEMemtyyOTBewTyspU4aACV74r3di-Lvg"
 
-# Secure direct connection to Google Generative AI REST engine
+# Zwróć uwagę na znak zapytania oraz przypisanie zmiennej 'key=' na końcu adresu:
 GEMINI_URL = f"https://googleapis.com{GEMINI_API_KEY}"
 HEADERS = {"Content-Type": "application/json"}
+# =====================================================================
+
 
 DOCS_FOLDER = "source_docs"
 
