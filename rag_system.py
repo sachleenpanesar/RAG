@@ -168,7 +168,7 @@ def chat():
     prompt = f"Answer the user's question using ONLY the provided context blocks.\n\nCONTEXT:\n{all_context}\n\nQUESTION:\n{user_query}"
 
     try:
-        response = client.models.generate_content(model="gemini-2.5-flash", contents=prompt)
+        response = client.models.generate_content(model="gemini-3.5-flash", contents=prompt)
         return jsonify({"reply": response.text})
     except Exception as e:
         return jsonify({"error": f"API Error: {str(e)}"}), 500
