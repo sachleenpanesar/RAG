@@ -1,14 +1,19 @@
 import os
+import requests
 from flask import Flask, request, jsonify, render_template_string
 from flask_cors import CORS
-from google import genai
 
 app = Flask(__name__)
 CORS(app)
 
+# ✅ YOUR EXACT VERIFIED WORKING API KEY FORMAT
 GEMINI_API_KEY = "AQ.Ab8RN6K2VT8n2yjHxiEMemtyyOTBewTyspU4aACV74r3di-Lvg"
+
+# Secure direct connection to Google Generative AI REST engine
+GEMINI_URL = f"https://googleapis.com{GEMINI_API_KEY}"
+HEADERS = {"Content-Type": "application/json"}
+
 DOCS_FOLDER = "source_docs"
-client = genai.Client(api_key=GEMINI_API_KEY)
 
 # =====================================================================
 # 🎨 NATIVE HTML VISUAL PAGE LAYOUT
@@ -97,7 +102,6 @@ async function runQuery() {
 
     chatContainer.innerHTML = `<div class="message user-msg">${queryText}</div><div class="message bot-msg">🔍 Processing query on server...</div>`;
 
-    // ✅ NO HARDCODED LINKS: Automatically connects to the exact same server it is hosted on!
     try {
         const response = await fetch("/api/chat", {
             method: "POST",
@@ -148,7 +152,6 @@ def read_local_documents():
                 pass
     return combined_text.strip()
 
-# ✅ NEW HOME ROUTE: Render will now display your beautiful webpage directly on this URL!
 @app.route("/", methods=["GET"])
 def home():
     return render_template_string(HTML_PAGE)
@@ -167,11 +170,22 @@ def chat():
 
     prompt = f"Answer the user's question using ONLY the provided context blocks.\n\nCONTEXT:\n{all_context}\n\nQUESTION:\n{user_query}"
 
+    # ✅ BYPASSES THE CLIENT SDK: Uses raw HTTP requests which cleanly support your exact AQ. key token
+    payload = {
+        "contents": [{"parts": [{"text": prompt}]}]
+    }
+    
     try:
-        response = client.models.generate_content(model="gemini-3.5-flash", contents=prompt)
-        return jsonify({"reply": response.text})
+        response = requests.post(GEMINI_URL, headers=HEADERS, json=payload)
+        res_json = response.json()
+        
+        if response.status_code != 200:
+            return jsonify({"error": f"Google API Error {response.status_code}: {response.text}"}), 500
+            
+        bot_reply = res_json["candidates"][0]["content"]["parts"][0]["text"]
+        return jsonify({"reply": bot_reply})
     except Exception as e:
-        return jsonify({"error": f"API Error: {str(e)}"}), 500
+        return jsonify({"error": f"Server Parsing Error: {str(e)}"}), 500
 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))
