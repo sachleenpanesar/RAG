@@ -6,7 +6,7 @@ from google import genai
 app = Flask(__name__)
 CORS(app)
 
-GEMINI_API_KEY = "AQ.Ab8RN6IU2rB_iBjYNN0T4Wt3HCi1D8f1M_imggMUngda72u02w"
+GEMINI_API_KEY = "AQ.Ab8RN6K2VT8n2yjHxiEMemtyyOTBewTyspU4aACV74r3di-Lvg"
 DOCS_FOLDER = "source_docs"
 client = genai.Client(api_key=GEMINI_API_KEY)
 
