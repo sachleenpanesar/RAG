@@ -1,0 +1,3 @@
+
+The IT support team handles password resets, software installations, and Windows troubleshooting.
+The company uses Windows 11 laptops.
